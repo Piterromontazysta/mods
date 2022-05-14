@@ -1,0 +1,42 @@
+  ModAPI.Register(
+                new Modification()
+                {
+                    OriginalItem = ModAPI.FindSpawnable("Glock 17"),
+                    NameOverride = "Glock 17 (9mm Pistol)",
+                    NameToOrderByOverride = "F#8",
+                    DescriptionOverride = "It's literally the basic PPG 9mm Pistol, but with enhanced textures, cuz the stock were shit.",
+                    CategoryOverride = ModAPI.FindCategory("Firearms"),
+                    ThumbnailOverride = ModAPI.LoadSprite("gloc/gloccthumb.png"),
+                    AfterSpawn = (Instance) =>
+                    {
+                        ModAPI.KeepExtraObjects();
+
+                        var GloccSlide = Instance.transform.Find("Slide");
+                        GloccSlide.GetComponent<SpriteRenderer>().sprite = ModAPI.LoadSprite("gloc/gloccslide.png", 5f);
+
+                        Instance.GetComponent<SpriteRenderer>().sprite = ModAPI.LoadSprite("gloc/glocc.png", 5f);
+
+                        var firearm = Instance.GetComponent<FirearmBehaviour>();
+
+                        Cartridge customCartridge = ModAPI.FindCartridge("9mm");
+
+                        customCartridge.name = "gloccartridge";
+
+                        customCartridge.Damage *= 0.7f;
+                        customCartridge.StartSpeed *= 1.5f;
+                        customCartridge.Recoil *= 0.7f;
+                        customCartridge.ImpactForce *= 0.95f;
+                        firearm.casingPosition = new Vector3(0f, 0.1f);
+                        firearm.Cartridge = customCartridge;
+
+                        Instance.GetComponent<FirearmBehaviour>().barrelPosition = new Vector2(0.1000f, 0.1000f);
+                        foreach (var c in Instance.GetComponents<Collider2D>())
+                        {
+                            GameObject.Destroy(c);
+                        }
+                        Instance.AddComponent<BoxCollider2D>();
+                        Instance.GetComponent<PhysicalBehaviour>().colliders = Instance.GetComponentsInChildren<Collider2D>();
+                        Instance.FixColliders();
+                    }
+                }
+            );
